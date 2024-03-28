@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import QUESTIONS from '../questions.js'
+import shuffle from './utils/shuffle.js';
+import quizCompleteImg from '../assets/quiz-complete.png'
 
 export default function Quiz(props) {
     const [userAnswers, setUserAnswers] = useState([]);
 
-    const activeQuestionindex = userAnswers.length;
+     const activeQuestionindex = userAnswers.length;
 
     function handleSelectAnswer(selectedAnswer) {
         setUserAnswers(prevAnswers => {
@@ -12,21 +14,20 @@ export default function Quiz(props) {
         })
     }
 
-    function shuffle(array) {
-        let currentIndex = array.length;
-        while (currentIndex != 0) {
-            let randomIndex = Math.floor(Math.random() * currentIndex);
-            currentIndex--;
+    const quizComplete = userAnswers.length === QUESTIONS.length
 
-            [array[currentIndex], array[randomIndex]] = [
-                array[randomIndex], array[currentIndex]];
-        }
+    if (quizComplete) {
+        return (
+            <div id="summary">
+                <h2>Quiz complete</h2>
+                <img src={quizCompleteImg} alt="Quiz complete picture" />
+            </div>
+        )
     }
 
-    const answers =[...QUESTIONS[activeQuestionindex].answers]
-    console.log(answers)
+    const answers = QUESTIONS[activeQuestionindex].answers
     shuffle(answers)
-    
+
     return (
         <div id='quiz'>
             <h2 id='questions'>{QUESTIONS[activeQuestionindex].text}</h2>
