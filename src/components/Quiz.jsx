@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import QUESTIONS from '../questions.js'
 import shuffle from './utils/shuffle.js';
 import quizCompleteImg from '../assets/quiz-complete.png'
@@ -14,6 +14,10 @@ export default function Quiz(props) {
             return [...prevAnswers, selectedAnswer]
         })
     }
+
+    const handleSkipAnswer = useCallback(() => {
+        handleSelectAnswer(null)
+    }, [])
 
     const quizComplete = userAnswers.length === QUESTIONS.length
 
