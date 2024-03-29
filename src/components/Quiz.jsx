@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import QUESTIONS from '../questions.js'
 import shuffle from './utils/shuffle.js';
 import quizCompleteImg from '../assets/quiz-complete.png'
@@ -10,11 +10,37 @@ export default function Quiz(props) {
 
     const activeQuestionindex = userAnswers.length;
 
+    //shuffle on inititial render
+    const answers = QUESTIONS[activeQuestionindex].answers 
+
+    useEffect((answers) => {
+        if (answers) {
+           shuffle(answers) 
+        } else {
+            console.log('invalid')
+            return answers
+        }
+    }, [answers])
+
     const handleSelectAnswer = useCallback((selectedAnswer) => {
-        setUserAnswers(prevAnswers => {
-            return [...prevAnswers, selectedAnswer]
-        })
-    } , [])
+        console.log(QUESTIONS[activeQuestionindex].answers[0])
+        console.log(selectedAnswer)
+        if (selectedAnswer === QUESTIONS[activeQuestionindex].answers[0]) {
+            console.log('true')
+            setAnswerState(true)
+        } else {
+            console.log('false')
+            setAnswerState(false)
+        }
+
+        const answerCorrectTimer = setTimeout(()=> { 
+            clearInterval(answerCorrectTimer)
+        
+            setUserAnswers(prevAnswers => {
+                return [...prevAnswers, selectedAnswer]
+            })
+        }, 1000) 
+    } , [activeQuestionindex])
 
     const handleSkipAnswer = useCallback(() => {
         handleSelectAnswer(null)
@@ -30,9 +56,6 @@ export default function Quiz(props) {
             </div>
         )
     }
-
-    const answers = QUESTIONS[activeQuestionindex].answers
-    shuffle(answers)
 
     return (
         <div id='quiz'>

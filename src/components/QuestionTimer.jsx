@@ -3,8 +3,6 @@ import React, { useEffect, useState } from 'react'
 export default function QuestionTimer({ timeout, onTimeOut }) {
     const [remainingTime, setRemainingTime] = useState(timeout);
 
-    console.log(remainingTime)
-
     // Triggers onTimeOut once it reaches 'timeout' interval
     useEffect(() => {
         console.log('SETTING TIMEOUT')
