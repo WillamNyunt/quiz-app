@@ -1,11 +1,11 @@
 export default function shuffle(array) {
     let currentIndex = array.length;
+    let newArr = [...array]
     while (currentIndex != 0) {
         let randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex--;
-
-        [array[currentIndex], array[randomIndex]] = [
-            array[randomIndex], array[currentIndex]];
+        [newArr[currentIndex], newArr[randomIndex]] = [
+            newArr[randomIndex], newArr[currentIndex]];
     }
-    return array;
+    return newArr;
 }

@@ -7,35 +7,28 @@ import QuestionTimer from './QuestionTimer.jsx';
 export default function Quiz(props) {
     const [answerState, setAnswerState] = useState('')
     const [userAnswers, setUserAnswers] = useState([]);
+    const shuffledAnswers = useRef()
 
-    console.log('Quiz component rendered')
-
+    //console.log('Quiz component rendered')
     const activeQuestionindex = answerState === '' ? userAnswers.length : userAnswers.length - 1;
+    console.log(activeQuestionindex)
 
-    const handleSelectAnswer = useCallback(
-        function handleSelectAnswer(selectedAnswer) {
-            setAnswerState('answered')
-            setUserAnswers(prevAnswers => {
-                return [...prevAnswers, selectedAnswer]
-            })
-            console.log('Answer States updated ')
-
+    const handleSelectAnswer = useCallback((selectedAnswer) => {
+        setAnswerState('answered')
+        setUserAnswers(prevAnswers => {
+            return [...prevAnswers, selectedAnswer]
+        })
+        setTimeout(() => {
+            if (selectedAnswer === QUESTIONS[activeQuestionindex].answers[0]) {
+                setAnswerState('correct')
+            } else {
+                setAnswerState('wrong')
+            }
             setTimeout(() => {
-                if (selectedAnswer === QUESTIONS[activeQuestionindex].answers[0]) {
-                    console.log('true')
-                    setAnswerState('correct')
-                } else {
-                    console.log('false')
-                    setAnswerState('wrong')
-                }
-                setTimeout(() => {
-                    setAnswerState('');
-                    console.log('set answer state')
-                }, 2000)
-
-                console.log('handle select answer end ')
-            }, 1000)
-        }, [activeQuestionindex])
+                setAnswerState('');
+            }, 2000)
+        }, 1000)
+    }, [activeQuestionindex])
 
     const handleSkipAnswer = useCallback(() => {
         handleSelectAnswer(null)
@@ -52,21 +45,26 @@ export default function Quiz(props) {
         )
     }
 
-    const shuffledAnswers = shuffle(QUESTIONS[activeQuestionindex].answers)
+    if (!shuffledAnswers.current) {
+        console.log(shuffledAnswers.current)
+        console.log('shuffled answers undefined')
+        shuffledAnswers.current = shuffle(QUESTIONS[activeQuestionindex].answers)
+    }
 
-    let cssClass = ''
 
     return (
         <div id='quiz'>
             <QuestionTimer key={activeQuestionindex} timeout={10000} onTimeOut={handleSkipAnswer} />
             <h2 id='questions'>{QUESTIONS[activeQuestionindex].text}</h2>
             <ul id='answers'>
-                {shuffledAnswers.map((answer) => {
+                {shuffledAnswers.current.map((answer) => {
+                    let cssClass = ''
                     const isSelected = userAnswers[userAnswers.length - 1] === answer;
+                    
                     if ((answerState === 'correct' || answerState == 'wrong') && isSelected) {
                         cssClass = answerState
                     }
-                    if (answerState == 'answered' && isSelected) {
+                    if ((answerState == 'answered') && isSelected) {
                         cssClass = 'selected'
                     }
                     return (
